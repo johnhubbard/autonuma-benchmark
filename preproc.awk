@@ -40,7 +40,7 @@ function bin2dec(bin)
 
 BEGIN \
 {
-	cpus = 0
+	cpus = NCPUS
 	nodes = 0
 	first_h = ""
 	second_h = ""
@@ -82,14 +82,13 @@ BEGIN \
 	for (i = 0; i < curr; i++)
 		bindmap = bindmap"+SIZE/"nodes
 	bindmap = bindmap", SIZE/"nodes");\n"
-	if ($NF > cpus)
-		cpus = $NF
 }
 
 END \
 {
-	cpus += 1
-	if (MoF)
+	# For Migrate on Fault, the idea is to limit the number of CPUs
+	# to something less than the number that are available.
+	if (MoF > 0)
 		cpus = MoF
 	threads = "#define THREADS "(cpus / 2)
 	ncpus = "#define NCPUS "cpus

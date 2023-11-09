@@ -25,6 +25,13 @@ usage()
 
 test_numa()
 {
+	which nproc > /dev/null
+
+	if [ $? -ne 0 ]; then
+		echo "Please install nproc(1) first."
+		exit
+	fi
+
 	NUMNODES=`numactl --hardware | grep available`
 	if [ $? -ne 0 ] ; then
 		echo "Abort: NUMA hardware not detected."
@@ -36,7 +43,7 @@ test_numa()
 		exit 1
 	fi
 	SIBLINGS=`grep -m 1 'siblings' /proc/cpuinfo | cut -f2 -d':'`
-	CORES=`grep -m 1 'cpu cores' /proc/cpuinfo | cut -f2 -d':'`
+	CORES=$(nproc)
 	if [ $MOF -ne 0 -a $MOF -le $CORES ]; then
 		MOF=$[MOF*NUMNODES]
 		echo "Migrate on fault test, use $MOF CPUs."
@@ -54,8 +61,8 @@ test_ht()
 
 parse_numa() 
 {
-	numactl --hardware | gawk -v MoF=$MOF -v file="numa01.c" -f preproc.awk > numa01.prep.c
-	numactl --hardware | gawk -v MoF=$MOF -v file="numa02.c" -f preproc.awk > numa02.prep.c
+	numactl --hardware | gawk -v MoF=$MOF -v file="numa01.c" -v NCPUS=$(nproc) -f preproc.awk > numa01.prep.c
+	numactl --hardware | gawk -v MoF=$MOF -v file="numa02.c" -v NCPUS=$(nproc) -f preproc.awk > numa02.prep.c
 }
 
 do_run_test()
