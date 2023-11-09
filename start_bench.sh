@@ -23,7 +23,7 @@ usage()
 	echo -e "\t-h : this help"
 }
 
-test_numa()
+configure_numa_values()
 {
 	which nproc > /dev/null
 
@@ -83,9 +83,13 @@ run_test()
 	fi
 }
 
+build_bench()
+{
+	make CC=gcc MOF=$MOF
+}
+
 run_bench()
 {
-	make MOF=$MOF
 	test_ht
 	TESTNAME=numa01
 	run_test
@@ -101,7 +105,7 @@ run_bench()
 	fi
 }
 
-cleanup() 
+cleanup()
 {
 	make clean
 }
@@ -147,6 +151,7 @@ while getopts "stnbiAmh" opt; do
 	esac
 done
 
-test_numa
+configure_numa_values
 cleanup
+build_bench
 run_bench

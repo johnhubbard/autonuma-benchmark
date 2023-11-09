@@ -7,7 +7,7 @@
 #  Tool for AutoNUMA benchmarking scripts
 #  
 
-CC=gcc
+CC ?= gcc
 CFLAGS=-O2 -lnuma -pthread
 MOF ?= 0
 
