@@ -59,12 +59,6 @@ test_ht()
 	fi
 }
 
-parse_numa() 
-{
-	numactl --hardware | gawk -v MoF=$MOF -v file="numa01.c" -v NCPUS=$(nproc) -f preproc.awk > numa01.prep.c
-	numactl --hardware | gawk -v MoF=$MOF -v file="numa02.c" -v NCPUS=$(nproc) -f preproc.awk > numa02.prep.c
-}
-
 do_run_test()
 {
 	echo "$TESTNAME"
@@ -91,7 +85,7 @@ run_test()
 
 run_bench()
 {
-	make
+	make MOF=$MOF
 	test_ht
 	TESTNAME=numa01
 	run_test
@@ -155,5 +149,4 @@ done
 
 test_numa
 cleanup
-parse_numa
 run_bench

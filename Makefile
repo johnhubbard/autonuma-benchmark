@@ -9,8 +9,13 @@
 
 CC=gcc
 CFLAGS=-O2 -lnuma -pthread
+MOF ?= 0
 
 all: numa01 numa02 nmstat
+
+numa0%.prep.c: numa0%.c
+	numactl --hardware | \
+	  gawk -v MoF=$(MOF) -v file=$< -v NCPUS=$$(nproc) -f preproc.awk > $@
 
 numa01: numa01.prep.c
 	$(CC) $< $(CFLAGS) -DNO_BIND_FORCE_SAME_NODE -o $@
@@ -19,6 +24,7 @@ numa01: numa01.prep.c
 	$(CC) $< $(CFLAGS) -DHARD_BIND -DINVERSE_BIND -o numa01_INVERSE_BIND
 	$(CC) $< $(CFLAGS) -DTHREAD_ALLOC -DHARD_BIND -o numa01_THREAD_ALLOC_HARD_BIND
 	$(CC) $< $(CFLAGS) -DTHREAD_ALLOC -DHARD_BIND -DINVERSE_BIND -o numa01_THREAD_ALLOC_INVERSE_BIND
+
 numa02: numa02.prep.c
 	$(CC) $< $(CFLAGS) -o $@
 	$(CC) $< $(CFLAGS) -DHARD_BIND -o numa02_HARD_BIND
@@ -26,7 +32,8 @@ numa02: numa02.prep.c
 	$(CC) $< $(CFLAGS) -DSMT -o numa02_SMT
 	$(CC) $< $(CFLAGS) -DSMT -DHARD_BIND -o numa02_SMT_HARD_BIND
 	$(CC) $< $(CFLAGS) -DSMT -DHARD_BIND -DINVERSE_BIND -o numa02_SMT_INVERSE_BIND
+
 nmstat: nmstat.c
 	$(CC) $< -std=gnu99 -O2 -o $@
-clean: 
-	rm -f numa01 numa02 numa01_* numa02_* numa01.prep.c numa02.prep.c nmstat *.txt *.pdf 
+clean:
+	rm -f numa01 numa02 numa01_* numa02_* numa01.prep.c numa02.prep.c nmstat *.txt *.pdf
