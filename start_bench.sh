@@ -85,7 +85,16 @@ run_test()
 
 build_bench()
 {
-	make CC=gcc MOF=$MOF
+	which bear > /dev/null
+
+	if [ $? -eq 0 ]; then
+		echo "Found bear(1), so also generating compile_commands.json"
+		make CC="bear --append -- gcc" MOF=$MOF
+	else
+		echo -n "Please install bear(1) if you would also like to "
+		echo "generate a compile_commands.json file."
+		make CC=gcc MOF=$MOF
+	fi
 }
 
 run_bench()

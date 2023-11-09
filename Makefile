@@ -36,4 +36,4 @@ numa02: numa02.prep.c
 nmstat: nmstat.c
 	$(CC) $< -std=gnu99 -O2 -o $@
 clean:
-	rm -f numa01 numa02 numa01_* numa02_* numa01.prep.c numa02.prep.c nmstat *.txt *.pdf
+	rm -f numa01 numa02 numa01_* numa02_* numa01.prep.c numa02.prep.c nmstat *.txt *.pdf compile_commands.json
