@@ -52,10 +52,15 @@ configure_numa_values()
 
 test_ht()
 {
-	if [ $SIBLINGS -eq $CORES ] ; then
-		echo "Hyper-Threading IS NOT enabled."
+	UNAME_M=$(uname -m)
+	if [ $UNAME_M = "aarch64" ]; then
+		echo "Hyper-Threading is not part of this CPU design ($UNAME_M)"
 	else
-		echo "Hyper-Threading IS enabled."
+		if [ $SIBLINGS -eq $CORES ] ; then
+			echo "Hyper-Threading IS NOT enabled."
+		else
+			echo "Hyper-Threading IS enabled."
+		fi
 	fi
 }
 
